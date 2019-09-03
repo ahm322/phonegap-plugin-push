@@ -358,7 +358,14 @@
     NSMutableDictionary *results = [NSMutableDictionary dictionary];
     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
 	    // [deviceToken description] is like "{length = 32, bytes = 0xd3d997af 967d1f43 b405374a 13394d2f ... 28f10282 14af515f }"
-	    NSString *token = [self hexadecimalStringFromData:deviceToken];
+
+        const unsigned *tokenBytes = [deviceToken bytes];
+    NSString *token = [NSString stringWithFormat:@"%08x%08x%08x%08x%08x%08x%08x%08x",
+                         ntohl(tokenBytes[0]), ntohl(tokenBytes[1]), ntohl(tokenBytes[2]),
+                         ntohl(tokenBytes[3]), ntohl(tokenBytes[4]), ntohl(tokenBytes[5]),
+                         ntohl(tokenBytes[6]), ntohl(tokenBytes[7])];
+
+	   // NSString *token = [self hexadecimalStringFromData:deviceToken];
 	#else
 	    // [deviceToken description] is like "<124686a5 556a72ca d808f572 00c323b9 3eff9285 92445590 3225757d b83967be>"
     NSString *token = [[[[deviceToken description] stringByReplacingOccurrencesOfString:@"<"withString:@""]
